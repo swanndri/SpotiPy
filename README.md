@@ -1,1 +1,1 @@
-# SpotiPi
+# SpotiPy
