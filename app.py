@@ -1,17 +1,32 @@
 from flask import (Flask, render_template, redirect, 
                   url_for, request, make_response, 
                   flash)
+from youtube_search import Youtube_API
+
 import os
 
 app = Flask(__name__)
 
 app.secret_key = os.urandom(24)
-
+youtube_api = Youtube_API() 
 
 @app.route('/')
 def index():
-	return render_template("login.html", html_title="Login | Spotipy")
+    return render_template("basic.html")
+    #return render_template("login.html")
 
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        qeury_string = request.form['query_string']
+        results = youtube_api.youtube_search(qeury_string)
+        for result in results:
+            print(result.get('video_id'))
+        return "results"
+        #return render_template("basic_list.html", videos=results)
+    else:
+        return "Search failed"
+    
 @app.route('/index.html', methods=['GET', 'POST'])
 def discoverView():
 	if request.method == 'POST':
@@ -20,7 +35,7 @@ def discoverView():
 
 		if attempt_login(username, password):
 			flash("Hey presto! Away you go")
-			return render_template("index.html")
+			return render_template("layout.html")
 		else:
 			flash("Oops, looks like those were the wrong details!")
 			return redirect(url_for('index'))
@@ -34,7 +49,7 @@ def attempt_login(username,	password):
 
 @app.errorhandler(404)
 def page_not_found(error):
-    return render_template('page_not_found.html'), 404
+    return render_template('lock_screen.html'), 404
 
 if __name__ == '__main__':
     app.run(debug=True, port = 8000)

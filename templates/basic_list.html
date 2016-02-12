@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Search Box Example 1</title>
+<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
+</head>
+<body>
+	<!-- HTML for SEARCH BAR -->
+	<div id="tfheader">
+		<form id="query_string" method="post" action="/search">
+		        <input type="text" class="tftextinput" name="search" size="21" maxlength="120"><input type="submit" value="search" class="tfbutton">
+		</form>
+	<div class="tfclear"></div>
+	</div>
+    <div id="list">
+		<ul>
+        {% for video in videos %}
+            {%if video%}
+                <li>{{video}}</li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+	<div class="tfclear"></div>
+	</div>
+</body>
