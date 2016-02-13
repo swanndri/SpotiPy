@@ -1,5 +1,4 @@
 #!/usr/bin/python
-
 '''
 Example of youtube api result
 
@@ -26,6 +25,7 @@ Example of youtube api result
 from apiclient.discovery import build
 from apiclient.errors import HttpError
 from oauth2client.tools import argparser
+import youtube_dl
 
 
 class Youtube_API:
@@ -54,8 +54,34 @@ class Youtube_API:
         # matching videos, channels, and playlists.
         for search_result in search_response.get("items", []):
             if search_result["id"]["kind"] == "youtube#video":
-                videos.append({'video_title':search_result["snippet"]["title"],
-                               'video_id':search_result["id"]["videoId"],
-                               'video_url':'https://www.youtube.com/watch?v='+search_result["id"]["videoId"]})
+                videos.append({'video_title': search_result["snippet"]["title"],
+                               'video_id': search_result["id"]["videoId"],
+                               'video_url': 'https://www.youtube.com/watch?v=' + search_result["id"]["videoId"]})
         return videos
+
+    def youtube_download(self, id):
+
+        """
+        Set up options for youtube-dl.
+            - Dir is defd by file name, should allow user to set where they want audio files to dl.
+            - Downloading all files as mp3, probz 4 the best.
+            - Currently only allow for best quality audio (late game audio quality choice)
+
+        Return \dir\id.tmp as this is the filename
+        """
+        download_dir = "static\\audio\\"
+        file_extension = ".tmp"
+        options = {
+            'format': 'bestaudio/best',  # choice of quality
+            'extractaudio': True,  # only keep the audio
+            'audioformat': "mp3",  # convert to mp3
+            'outtmpl': download_dir+'%(id)s'+file_extension,  # name the file the ID of the video
+            'noplaylist': True,}  # only download single song, not playlist
+
+        ydl = youtube_dl.YoutubeDL(options)
+        info = ydl.extract_info(str(id), download=True)
+
+        return (download_dir + str(id) + file_extension).replace('\\','/')
+
+
 
